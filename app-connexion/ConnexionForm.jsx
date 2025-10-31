@@ -1,18 +1,26 @@
 "use client";
 import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function ConnexionForm(){
   const [email,setEmail] = React.useState("");
+  const [redirect,setRedirect] = React.useState("/dashboard");
   const router = useRouter();
-  const q = useSearchParams();
+
+  React.useEffect(()=>{
+    try{
+      const search = typeof window !== "undefined" ? window.location.search : "";
+      const p = new URLSearchParams(search);
+      const r = p.get("redirect") || "/dashboard";
+      setRedirect(r);
+    }catch{}
+  },[]);
 
   const submit = (e) => {
     e.preventDefault();
     const v = email.trim();
     if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){ alert("Email invalide"); return; }
     try { localStorage.setItem("optimus_user_email", v); } catch {}
-    const redirect = q.get("redirect") || "/dashboard";
     router.replace(redirect);
   };
 
